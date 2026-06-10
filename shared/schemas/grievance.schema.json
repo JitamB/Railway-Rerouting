@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cascadeguard/schemas/grievance.json",
+  "title": "GrievanceCase",
+  "description": "A helpline query/grievance tracked through to resolution.",
+  "type": "object",
+  "required": ["case_id", "passenger_id", "category", "department", "status", "created_at"],
+  "properties": {
+    "case_id": { "type": "string" },
+    "passenger_id": { "type": "string", "description": "Scopes the case to its owner." },
+    "category": {
+      "type": "string",
+      "description": "Classified grievance category that drives authority routing.",
+      "examples": ["security", "medical", "cleanliness", "catering", "punctuality_delay"]
+    },
+    "department": { "type": "string", "description": "Authority the case was routed to." },
+    "channel": { "type": "string", "enum": ["railmadad", "email"] },
+    "external_reference": { "type": "string", "description": "Authority's ticket id, for tracking." },
+    "summary": { "type": "string", "description": "Human-readable case summary (LLM-phrased)." },
+    "language": { "type": "string", "description": "Passenger's language, e.g. hi, bn, ta." },
+    "input_mode": { "type": "string", "enum": ["text", "speech"] },
+    "transcript": { "type": "string", "description": "ASR transcript when input was speech." },
+    "status": {
+      "type": "string",
+      "enum": ["open", "in_progress", "resolved", "rejected"]
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "history": {
+      "type": "array",
+      "description": "Status changes / messages over the case lifetime.",
+      "items": {
+        "type": "object",
+        "required": ["at", "status"],
+        "properties": {
+          "at": { "type": "string", "format": "date-time" },
+          "status": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}
