@@ -10,6 +10,8 @@ operator dashboard.
 | `stations.py` | `GET /stations/{code}` | Incoming trains + delay probability + ETA range |
 | `corridor.py` | `GET /corridor/{zone}` | Aggregate corridor health score (the open **Corridor Risk API**) |
 | `reroute.py` | `POST /reroute` | Feasible alternatives for a passenger/PNR |
+| `helpline.py` | `POST /helpline/chat` | Helpline turn (text **or** regional-language audio) → agent reply + opened case (delegates to `services/helpline`) |
+| `queries.py` | `GET /queries`, `GET /queries/{case_id}` | Passenger's past queries + status (resolved/pending) and case history |
 | `ws.py` | `WS /ws/live` | Live cascade deltas to the dashboard (push deltas, not full state — audit-02 §1.5) |
 
 `main.py` mounts the routers and exposes `GET /health`. Responses carry a **staleness
