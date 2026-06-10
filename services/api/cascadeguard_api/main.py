@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from .routers import cascade, corridor, reroute, stations, ws
+from .routers import cascade, corridor, helpline, queries, reroute, stations, ws
 
 app = FastAPI(title="CascadeGuard API", version="0.0.0")
 
@@ -24,4 +24,6 @@ app.include_router(cascade.router)
 app.include_router(stations.router)
 app.include_router(corridor.router)
 app.include_router(reroute.router)
+app.include_router(helpline.router)
+app.include_router(queries.router)
 app.include_router(ws.router)
