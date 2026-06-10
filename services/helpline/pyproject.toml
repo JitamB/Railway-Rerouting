@@ -1,0 +1,22 @@
+[project]
+name = "cascadeguard-helpline"
+version = "0.0.0"
+description = "CascadeGuard passenger helpline — multilingual grievance chatbot, authority routing, case tracking."
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.40",       # the understanding/agent layer
+    "pydantic>=2.6",
+    "httpx>=0.27",           # ASR/NMT/TTS (Bhashini) + authority dispatch adapters
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+asr-local = ["openai-whisper>=20231117"]   # offline ASR fallback
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cascadeguard_helpline"]
