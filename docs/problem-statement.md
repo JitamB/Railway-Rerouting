@@ -47,6 +47,11 @@ questions in real time:
    language?"* → pushed to the **passenger PWA** (the primary surface) before they know
    there's a problem.
 
+The PWA also carries a **helpline**: a chatbot that takes **text or regional-language
+speech**, understands the query with an **agent**, fetches the passenger's details, opens a
+tracked case, and forwards it to the **appropriate authority** (RailMadad-style routing). Every
+past query and its status (resolved / pending) is visible under **My Queries**. See §7.5.
+
 **Primacy is explicit:** the passenger PWA + proactive re-routing is the product; the
 operator heatmap is situational-awareness context, not the core. The operator
 decision/dispatch optimizer is **Phase-2**, not on the critical path
@@ -172,6 +177,42 @@ Because proactive re-routing *is* the product, its realism gaps are correctness,
 
 ---
 
+## 7.5 Passenger Helpline & Grievance Redressal
+
+A support layer inside the same app, for the questions and complaints prediction can't answer.
+
+**What the passenger does:** opens the helpline and asks by **text or regional-language
+speech** ("मेरी ट्रेन की AC काम नहीं कर रही", spoken in Hindi/Bengali/Tamil/…).
+
+**What the system does** (agentic pipeline — see [workflow.md Part A.2](workflow.md)):
+1. **Transcribe** speech to text via regional-language ASR (Bhashini/ULCA primary, Whisper
+   fallback); optionally translate to a working language.
+2. **Understand** the query with an LLM agent — classify the grievance category and extract
+   entities (PNR, train, station, coach).
+3. **Fetch passenger details** from the PNR/profile (IRCTC mocked honestly).
+4. **Open a tracked case** and **route it to the appropriate authority** (RPF, Medical,
+   Sanitation, IRCTC Catering, Electrical, Operations, Commercial…) — RailMadad-style.
+5. **Dispatch** the case to that authority (RailMadad/email adapter, mocked) and reply to the
+   passenger (text, plus optional spoken reply via TTS) with the case id + department.
+
+**My Queries:** every case is visible with its status — `open → in_progress → resolved`
+(or `rejected`) — and its history.
+
+**Design rules** (consistent with the rest of the system):
+- **Structured fields are authoritative; the LLM only phrases.** Routing/dispatch use the
+  classified category + extracted entities — a misrouted department is worse than a clumsy
+  sentence (mirrors the template-first rule for alerts).
+- **Mock honestly, design the real adapter.** Bhashini and RailMadad aren't openly turnkey, so
+  they sit behind clean adapters and are mocked until access exists.
+- **Privacy.** Grievances are PII: store the minimum for status tracking, scope each passenger
+  to their own cases, honour a retention policy ([audit-04 bonus](audit-04-flaws-edge-cases.md)).
+- **Low confidence → general helpdesk**, never a guessed department.
+
+Built by `services/helpline/` (agent · ASR/TTS · intent · authority routing · cases · dispatch),
+exposed via `services/api` routers `helpline` + `queries`, surfaced in the passenger PWA.
+
+---
+
 ## 8. Edge-case hardening (from [audit-04](audit-04-flaws-edge-cases.md))
 
 | # | Failure | One-line fix |
@@ -199,6 +240,8 @@ Because proactive re-routing *is* the product, its realism gaps are correctness,
 | ML | **PyTorch Geometric** | Graph WaveNet/DCRNN, HeteroData, conformal, GNNExplainer |
 | Re-routing | Python (capacity-constrained assignment) | core engine |
 | LLM | **Claude API** (`claude-sonnet-4-6`) | template-first, async, phrasing only |
+| Helpline ASR/NMT/TTS | **Bhashini/ULCA** (Whisper fallback) | regional-language speech in/out; mocked honestly |
+| Grievance dispatch | **RailMadad-style** adapter (mocked) | category → authority routing + case tracking |
 | Backend | **FastAPI** | REST + WebSocket + Corridor Risk API + OpenAPI `/docs` |
 | Operator UI | **React + Mapbox GL JS** | heatmap + cascade chain (context) |
 | Passenger UI | **Next.js PWA + FCM** | offline-first, push, primary surface |
@@ -212,8 +255,10 @@ Because proactive re-routing *is* the product, its realism gaps are correctness,
 
 - **In (build):** digital twin, ingestion + validation gate, heterogeneous graph, one
   ST-GNN + ablation, capacity-aware re-route, template-first alerts + async LLM, passenger
-  PWA, operator heatmap, REST/WS API, graceful degradation.
-- **Mocked (honestly):** COA/RTIS live feed, IRCTC availability/booking, FCM in some envs.
+  PWA, operator heatmap, REST/WS API, graceful degradation, **helpline chatbot
+  (text + regional-language speech) with authority routing + case tracking**.
+- **Mocked (honestly):** COA/RTIS live feed, IRCTC availability/booking, FCM in some envs,
+  **Bhashini ASR/TTS, RailMadad authority dispatch**.
 - **Phase-2 (roadmap, not a gate):** operator dispatch optimizer (CP-SAT / Maskable-PPO on
   Flatland), IoT edge nodes (MQTT/LoRaWAN, axle counters, ONNX edge inference),
   multi-zone partitioning, multilingual alerts.
@@ -229,8 +274,8 @@ Honest scope is declared in `WHAT_WE_BUILT.md` (real / mocked / next).
 | Member 1 | ML / Model | ST-GNN (`ml/`), training, quantisation, ablation |
 | Member 2 | ML / Data Eng | Hetero graph build (`data/graph/`), conformal/eval, historical calibration |
 | Member 3 | Data Eng | Digital twin (`data/simulator/`), ingestion + validation gate (`data/ingestion/`), Redis Streams |
-| Member 4 | Full-Stack / Frontend | Passenger PWA + operator dashboard (`frontend/`), FCM, push |
-| Member 5 | Full-Stack / Backend | FastAPI + WS API (`services/api/`), re-route engine, worker, Docker |
+| Member 4 | Full-Stack / Frontend | Passenger PWA + operator dashboard (`frontend/`), FCM, push, **helpline chat + My-Queries screens** |
+| Member 5 | Full-Stack / Backend | FastAPI + WS API (`services/api/`), re-route engine, worker, **helpline service** (agent/ASR/routing/cases), Docker |
 
 ---
 
