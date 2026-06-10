@@ -1,7 +1,8 @@
 # CascadeGuard — Workflow
 
 Two workflows in one file:
-- **Part A — Runtime pipeline:** how data moves through the *running* system, step by step.
+- **Part A — Runtime pipelines:** how the *running* system works, step by step —
+  **A.1** cascade prediction → re-routing, and **A.2** the helpline / grievance flow.
 - **Part B — Build sequence:** how the 5-person team *builds* it, phase by phase.
 
 Read [problem-statement.md](problem-statement.md) first for the architecture and the
@@ -9,7 +10,7 @@ hardening decisions these workflows implement.
 
 ---
 
-## Part A — Runtime pipeline (event → passenger push)
+## Part A.1 — Cascade pipeline (event → passenger push)
 
 Each numbered stage maps to a directory in the scaffold; the audit reference is the risk it
 closes.
@@ -75,6 +76,41 @@ The **worker** (`services/worker/pipeline.py`) orchestrates stages 2→8; the **
 
 ---
 
+## Part A.2 — Helpline / grievance flow (query → routed case → status)
+
+A passenger-initiated, request/response flow (not event-driven). Backed by
+`services/helpline/`, exposed via `services/api` routers `helpline` + `queries`.
+
+```
+ passenger asks (text | speech)
+   └─►(1) POST /helpline/chat
+        └─►(2) ASR + translate ─►(3) understand ─►(4) fetch details ─►(5) open case
+                                                                            │
+   passenger sees status ◄─(8) My Queries ◄─(7) dispatch ◄─(6) route to authority
+```
+
+1. **Receive** a turn at `POST /helpline/chat` — text, or a regional-language audio clip
+   captured in the PWA (`lib/speech.ts`).
+2. **Transcribe + translate** (`helpline/asr.py`) — speech → text via Bhashini/ULCA (Whisper
+   fallback); optionally NMT into the agent's working language.
+3. **Understand** (`helpline/intent.py`) — LLM agent classifies the grievance category and
+   extracts entities (PNR, train, station, coach); low confidence is flagged.
+4. **Fetch passenger details** (`helpline/passenger.py`) — resolve PNR/profile to name, train,
+   coach, journey (IRCTC mocked honestly); attach only the minimum PII.
+5. **Open a tracked case** (`helpline/cases.py`) — persist to `grievance_cases` with status
+   `open`; the agent's summary is LLM-phrased, the routing fields are structured.
+6. **Route to authority** (`helpline/authority_router.py` + `authorities.py`) — category →
+   department from the registry; unsure → general helpdesk, never a guessed department.
+7. **Dispatch** (`helpline/dispatch.py`) — forward the structured case to the authority
+   (RailMadad/email adapter, mocked); store the external reference for tracking.
+8. **Reply + track** — return case id, department, and status to the PWA (text + optional TTS
+   spoken reply). The case appears under **My Queries** (`GET /queries`); status advances
+   `open → in_progress → resolved` (or `rejected`) on authority callbacks, with history.
+
+**Privacy:** grievances are PII — minimized, owner-scoped, retention-bounded.
+
+---
+
 ## Part B — Team build sequence (phases · owners · verify)
 
 Adapted from the audit's 10-day action plan ([audit-00](audit-00-verdict.md)). Each phase
@@ -109,6 +145,13 @@ has a verifiable exit check. Owners reference the roles in
   alerts + async Claude** phrasing; **passenger PWA** (FCM) + **operator heatmap**.
 - **verify:** a twin-injected delay produces a phone push *before* the simulated official
   announcement; operator heatmap updates live over WS.
+
+### Phase 4b — Helpline & grievance redressal *(M4 + M5, days 7–9, overlaps Phase 4)*
+- `services/helpline/` agent (intent + authority routing + cases + dispatch) behind
+  `POST /helpline/chat`; regional-language **ASR** (Bhashini/Whisper, mocked) + optional TTS;
+  PWA **Helpline** chat (text + mic) and **My Queries** status screen; grievance tables.
+- **verify:** a spoken Hindi complaint opens a case, routes to the correct department, and
+  shows up under My Queries with a status that can advance to *resolved*.
 
 ### Phase 5 — Demo weaponization & honesty *(all, days 8–10)*
 - Counterfactual + **the one number**; live graceful-degradation demo (kill the feed on
