@@ -1,0 +1,34 @@
+# Grievance category -> authority/department mapping (example).
+# Mirrors RailMadad's department routing. Used by authority_router.py.
+# channel: how the case is dispatched (mocked adapters in dispatch.py).
+
+authorities:
+  - category: security
+    department: "RPF (Railway Protection Force)"
+    channel: railmadad
+  - category: medical
+    department: "Railway Medical / on-board doctor"
+    channel: railmadad
+  - category: cleanliness
+    department: "OBHS / Sanitation"
+    channel: railmadad
+  - category: catering
+    department: "IRCTC Catering"
+    channel: railmadad
+  - category: electrical_ac
+    department: "Electrical (AC/Coach)"
+    channel: railmadad
+  - category: punctuality_delay
+    department: "Operations / Control Office"
+    channel: railmadad
+  - category: refund_ticketing
+    department: "Commercial / IRCTC"
+    channel: railmadad
+  - category: coach_maintenance
+    department: "Mechanical / C&W"
+    channel: railmadad
+
+# Fallback when the classifier is unsure.
+default:
+  department: "RailMadad General Helpdesk"
+  channel: railmadad
