@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cascadeguard/schemas/event.json",
+  "title": "TrainEvent",
+  "description": "Normalized train-position / delay event emitted by every ingestion adapter.",
+  "type": "object",
+  "required": ["train_no", "station", "event_time", "delay_min", "received_time", "source"],
+  "properties": {
+    "train_no": { "type": "string", "description": "Train number, e.g. 12301" },
+    "station": { "type": "string", "description": "Station code, e.g. PNBE" },
+    "event_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the train was actually there (event-time, not processing-time)."
+    },
+    "received_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the system received it; (received - event) gives data-age."
+    },
+    "delay_min": { "type": "number", "description": "Minutes late vs schedule at event_time." },
+    "source": {
+      "type": "string",
+      "enum": ["twin", "coa_rtis", "ntes"],
+      "description": "Which adapter produced this event."
+    },
+    "regime": {
+      "type": "string",
+      "enum": ["normal", "fog", "monsoon", "heat"],
+      "description": "Weather operating-regime at the event (audit-04 §4)."
+    },
+    "position_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence after map-matching; low values down-weight the event."
+    }
+  }
+}

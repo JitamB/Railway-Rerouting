@@ -1,0 +1,7 @@
+# Deterministic guidance templates (English). One line per delay band.
+# Safety-critical fields are placeholders filled from structured data, never the LLM.
+# Bands: low (<15m), medium (15-40m), high (>40m).
+
+low|Your {train_no} is running about {delay_min} min late. No action needed yet; we'll alert you if risk rises.
+medium|Your {train_no} has a {risk_pct}% chance of {threshold}+ min delay. Alternative: {alt_train} from Platform {alt_platform} at {alt_depart}, reaching {dest} ~{alt_eta}.
+high|Your {train_no} is at high risk ({risk_pct}%) of major delay. Best option: {alt_train}, Platform {alt_platform}, {alt_depart} — arrives {dest} only {delta_min} min later. Seats: {seats_status}.

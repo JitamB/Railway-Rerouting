@@ -1,0 +1,35 @@
+[project]
+name = "cascadeguard-ml"
+version = "0.0.0"
+description = "CascadeGuard prediction core — one spatio-temporal GNN over a heterogeneous graph."
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.2",
+    "torch-geometric>=2.5",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "pydantic>=2.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+train = ["lightning>=2.2", "tensorboard>=2.16"]
+quantize = ["onnx>=1.16", "onnxruntime>=1.18"]
+
+[project.scripts]
+cascadeguard-infer = "cascadeguard_ml.inference:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+    "cascadeguard_ml",
+    "cascadeguard_ml.models",
+    "cascadeguard_ml.training",
+    "cascadeguard_ml.uncertainty",
+    "cascadeguard_ml.explain",
+    "cascadeguard_ml.ood",
+    "cascadeguard_ml.eval",
+]

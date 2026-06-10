@@ -1,0 +1,23 @@
+{
+  "name": "cascadeguard-passenger-pwa",
+  "version": "0.0.0",
+  "private": true,
+  "description": "CascadeGuard passenger PWA — proactive re-route cards (primary surface).",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "firebase": "^10.12.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/react": "^18.3.0",
+    "@types/node": "^20.12.0"
+  }
+}

@@ -1,0 +1,22 @@
+[project]
+name = "cascadeguard-sim"
+version = "0.0.0"
+description = "CascadeGuard digital twin — discrete-event simulator (primary data source)."
+requires-python = ">=3.11"
+dependencies = [
+    "simpy>=4.1",
+    "networkx>=3.2",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "pydantic>=2.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cascadeguard_sim"]

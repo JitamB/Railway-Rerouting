@@ -1,0 +1,22 @@
+[project]
+name = "cascadeguard-graph"
+version = "0.0.0"
+description = "CascadeGuard heterogeneous station-dependency graph (core IP)."
+requires-python = ">=3.11"
+dependencies = [
+    "networkx>=3.2",
+    "numpy>=1.26",
+    "pydantic>=2.6",
+    # torch-geometric is installed in the ml package; graph build stays framework-light.
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+store = ["neo4j>=5.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cascadeguard_graph"]

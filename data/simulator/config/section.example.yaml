@@ -1,0 +1,29 @@
+# Example section definition for the digital twin. Copy and edit per section.
+section:
+  name: "Example Section (PNBE–DDU corridor stub)"
+  zone: "ECR"
+
+stations:
+  - code: PNBE
+    name: "Patna Jn"
+    platforms: 10
+  - code: MGS
+    name: "Mughal Sarai / DDU Jn"
+    platforms: 8
+  - code: BSB
+    name: "Varanasi Jn"
+    platforms: 9
+
+block_sections:
+  - { from: PNBE, to: MGS, length_km: 210, headway_min: 5 }
+  - { from: MGS, to: BSB, length_km: 18, headway_min: 4 }
+
+# Trainsets and rake links (same physical rake turning around as a later service).
+rakes:
+  - rake_id: R-12301
+    services: ["12301", "12302"]   # inbound -> outbound turnaround (rake-link edge)
+
+# Disruption scenarios available to scenarios.py
+scenarios:
+  - { id: fog_regime, type: weather, regime: fog, speed_kmph: 60 }
+  - { id: ohe_failure, type: infra, location: MGS, duration_min: 45 }

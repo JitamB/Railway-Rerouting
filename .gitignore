@@ -1,0 +1,40 @@
+# --- secrets ---
+.env
+*.local
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- ML artifacts (keep dirs via .gitkeep, ignore weights/data) ---
+ml/checkpoints/*
+!ml/checkpoints/.gitkeep
+data/datasets/*
+!data/datasets/.gitkeep
+data/graph/artifacts/*
+!data/graph/artifacts/.gitkeep
+*.pt
+*.onnx
+*.ckpt
+
+# --- Node / frontend ---
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+.turbo/
+
+# --- editors / OS ---
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,20 @@
+[project]
+name = "cascadeguard-reroute"
+version = "0.0.0"
+description = "CascadeGuard capacity-aware re-routing engine (the core output)."
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pydantic>=2.6",
+    "scipy>=1.12",       # capacity-constrained assignment
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cascadeguard_reroute"]

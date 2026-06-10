@@ -1,0 +1,26 @@
+# Spatio-temporal GNN config (example).
+model:
+  arch: graph_wavenet        # graph_wavenet | dcrnn | tgn
+  hidden_dim: 64
+  layers: 4                  # >= 4 hops: a 6-station/90-min spread is 4-6 hops (audit-02 §3.3)
+  edge_types: [block_conflict, platform_conflict, rake_link, crew_link, loco_link]
+  learn_adjacency: true      # learn edge weights, do not hand-set (audit-02 §3.4)
+
+training:
+  loss: focal                # tail-aware: penalize missed large cascades (audit-04 §6)
+  class_weighting: true
+  epochs: 50
+  lr: 0.001
+  batch_size: 32
+
+uncertainty:
+  conformal: true
+  target_coverage: 0.90
+
+ood:
+  detector: mahalanobis      # flag off-distribution -> simulator fallback (audit-04 §2)
+
+eval:
+  ablation: [with_rake_link, without_rake_link]
+  metrics: [tail_recall, brier, reliability_curve]
+  regime_stratified: true    # report fog/monsoon/normal separately (audit-04 §4)

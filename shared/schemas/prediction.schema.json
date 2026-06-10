@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cascadeguard/schemas/prediction.json",
+  "title": "CascadePrediction",
+  "description": "Per-station cascade prediction produced by the ST-GNN.",
+  "type": "object",
+  "required": ["station", "cascade_risk", "delay_interval_min", "data_age_s", "mode"],
+  "properties": {
+    "station": { "type": "string" },
+    "cascade_risk": { "type": "number", "minimum": 0, "maximum": 1 },
+    "delay_mean_min": { "type": "number" },
+    "delay_interval_min": {
+      "type": "array",
+      "description": "Conformal [lower, upper] interval with guaranteed coverage.",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "why": {
+      "type": "string",
+      "description": "One-line GNNExplainer attribution, e.g. rake-link 12301<->12302 (60%)."
+    },
+    "data_age_s": {
+      "type": "number",
+      "description": "Staleness watermark — seconds since the underlying data (audit-04 §1)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["live", "dead_reckoning", "schedule_prior"],
+      "description": "Degradation mode this prediction was produced under."
+    },
+    "ood": {
+      "type": "boolean",
+      "description": "True if produced via the simulator OOD fallback (audit-04 §2)."
+    }
+  }
+}
