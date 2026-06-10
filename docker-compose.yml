@@ -23,6 +23,7 @@ services:
     depends_on:
       - redis
       - timescaledb
+      - helpline
     ports:
       - "8000:8000"
 
@@ -32,6 +33,14 @@ services:
     depends_on:
       - redis
       - timescaledb
+
+  helpline:
+    build: ./services/helpline
+    env_file: .env
+    depends_on:
+      - timescaledb
+    ports:
+      - "8100:8100"
 
   passenger-pwa:
     build: ./frontend/passenger-pwa
