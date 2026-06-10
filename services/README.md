@@ -8,6 +8,7 @@ The serving and orchestration tier. Each subdirectory is an independently builda
 | [api/](api/) | FastAPI: REST + WebSocket + the open **Corridor Risk API** | — |
 | [reroute-engine/](reroute-engine/) | **Capacity-aware re-routing — the core output** | audit-01 §5, audit-03 §3, audit-04 §7 |
 | [llm-agent/](llm-agent/) | Claude phrasing — **template-first, async, non-blocking** | audit-02 §1.4/§3.5 |
+| [helpline/](helpline/) | **Passenger helpline & grievance redressal** — multilingual speech/text chatbot, authority routing, case tracking | — |
 | [notifier/](notifier/) | FCM push + **cost-sensitive** notification trigger | audit-02 §4 |
 | [worker/](worker/) | Stream consumer that **orchestrates the runtime pipeline** + graceful degradation | audit-04 §1 |
 
