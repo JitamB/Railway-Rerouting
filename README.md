@@ -23,8 +23,8 @@ is announced.
 |---|---|
 | [data/](data/) | Digital twin (primary data), ingestion + validation gate, dependency graph |
 | [ml/](ml/) | One spatio-temporal GNN, conformal uncertainty, explainability, OOD, eval |
-| [services/](services/) | FastAPI API, capacity-aware re-route engine, LLM phrasing, notifier, worker |
-| [frontend/](frontend/) | Passenger PWA (primary) + operator dashboard (context) |
+| [services/](services/) | FastAPI API, capacity-aware re-route engine, LLM phrasing, **helpline (grievance chatbot)**, notifier, worker |
+| [frontend/](frontend/) | Passenger PWA (primary, incl. helpline + my-queries) + operator dashboard (context) |
 | [shared/](shared/) | Cross-service event & prediction schemas |
 | [infra/](infra/) | Docker, Redis, TimescaleDB, setup/demo scripts |
 | [iot/](iot/) | Phase-2 edge-node schematic (optional) |
