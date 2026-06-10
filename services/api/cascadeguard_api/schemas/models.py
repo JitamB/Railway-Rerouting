@@ -26,3 +26,21 @@ class RerouteResponse(BaseModel):
     current_risk: float
     options: list[RerouteOption]
     guidance: str
+
+
+class HelplineReply(BaseModel):
+    case_id: str
+    text: str
+    audio_url: str | None = None  # set when a spoken (TTS) reply is returned
+    authority: str                # department the case was routed to
+    status: str                   # case status, e.g. "open"
+
+
+class QuerySummary(BaseModel):
+    case_id: str
+    category: str
+    department: str
+    summary: str
+    status: str                   # open | in_progress | resolved | rejected
+    created_at: str
+    updated_at: str
