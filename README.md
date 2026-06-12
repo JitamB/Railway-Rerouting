@@ -14,8 +14,9 @@ is announced.
 
 1. [docs/problem-statement.md](docs/problem-statement.md) — authoritative problem + architecture
 2. [docs/workflow.md](docs/workflow.md) — runtime pipeline + team build sequence
-3. [intuition.md](intuition.md) — original v0 vision (superseded where it conflicts with the audit)
-4. [docs/audit-00-verdict.md](docs/audit-00-verdict.md) — audit verdict + action plan (start here for the audit)
+3. [docs/implementation-guide.md](docs/implementation-guide.md) — step-by-step, file-by-file build order
+4. [intuition.md](intuition.md) — original v0 vision (superseded where it conflicts with the audit)
+5. [docs/audit-00-verdict.md](docs/audit-00-verdict.md) — audit verdict + action plan (start here for the audit)
 
 ## Repository layout
 
@@ -24,7 +25,7 @@ is announced.
 | [data/](data/) | Digital twin (primary data), ingestion + validation gate, dependency graph |
 | [ml/](ml/) | One spatio-temporal GNN, conformal uncertainty, explainability, OOD, eval |
 | [services/](services/) | FastAPI API, capacity-aware re-route engine, LLM phrasing, **helpline (grievance chatbot)**, notifier, worker |
-| [frontend/](frontend/) | Passenger PWA (primary, incl. helpline + my-queries) + operator dashboard (context) |
+| [frontend/](frontend/) | Passenger app — **Expo/React Native** native, incl. helpline + my-queries (primary) + operator dashboard web (context) |
 | [shared/](shared/) | Cross-service event & prediction schemas |
 | [infra/](infra/) | Docker, Redis, TimescaleDB, setup/demo scripts |
 | [iot/](iot/) | Phase-2 edge-node schematic (optional) |
@@ -49,4 +50,4 @@ pip install -e ml             # or data/simulator, services/api, ...
 
 ---
 
-*CascadeGuard — FAR AWAY 2026 · Railways Track · Built with PyTorch Geometric · FastAPI · Next.js · Claude API · Indian Railways open data + a calibrated digital twin.*
+*CascadeGuard — FAR AWAY 2026 · Railways Track · Built with PyTorch Geometric · FastAPI · Expo / React Native · Claude API · Indian Railways open data + a calibrated digital twin.*

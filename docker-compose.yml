@@ -42,12 +42,9 @@ services:
     ports:
       - "8100:8100"
 
-  passenger-pwa:
-    build: ./frontend/passenger-pwa
-    depends_on:
-      - api
-    ports:
-      - "3000:3000"
+  # The passenger app is native (Expo / React Native) — not a containerized web service.
+  # Run it with `cd frontend/passenger-app && npx expo start` (Expo Go / EAS build).
+  # It talks to the `api` service over REST + expo-notifications push.
 
   operator-dashboard:
     build: ./frontend/operator-dashboard

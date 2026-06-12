@@ -63,7 +63,7 @@ closes.
    - emit a **template-first** alert instantly (safety-critical fields — train no., platform,
      time — are templated, never LLM-generated);
    - **asynchronously** enrich phrasing via Claude (`services/llm-agent/`) when reachable;
-   - deliver to the **passenger PWA** via FCM (`services/notifier/fcm.py`) and update the
+   - deliver to the **passenger app** via push (`services/notifier/fcm.py` → expo-notifications, FCM/APNs) and update the
      **operator heatmap** over WebSocket (`services/api/routers/ws.py`). *(audit-02 §1.4, §3.5)*
 
 9. **Degrade gracefully** (`services/worker/degradation.py`) — if the feed drops:
@@ -90,7 +90,7 @@ A passenger-initiated, request/response flow (not event-driven). Backed by
 ```
 
 1. **Receive** a turn at `POST /helpline/chat` — text, or a regional-language audio clip
-   captured in the PWA (`lib/speech.ts`).
+   captured in the app (`lib/speech.ts`, expo-av).
 2. **Transcribe + translate** (`helpline/asr.py`) — speech → text via Bhashini/ULCA (Whisper
    fallback); optionally NMT into the agent's working language.
 3. **Understand** (`helpline/intent.py`) — LLM agent classifies the grievance category and
@@ -103,7 +103,7 @@ A passenger-initiated, request/response flow (not event-driven). Backed by
    department from the registry; unsure → general helpdesk, never a guessed department.
 7. **Dispatch** (`helpline/dispatch.py`) — forward the structured case to the authority
    (RailMadad/email adapter, mocked); store the external reference for tracking.
-8. **Reply + track** — return case id, department, and status to the PWA (text + optional TTS
+8. **Reply + track** — return case id, department, and status to the app (text + optional TTS
    spoken reply). The case appears under **My Queries** (`GET /queries`); status advances
    `open → in_progress → resolved` (or `rejected`) on authority callbacks, with history.
 
@@ -142,14 +142,14 @@ has a verifiable exit check. Owners reference the roles in
 
 ### Phase 4 — Serve it *(M4 + M5, days 6–8, overlaps Phase 3)*
 - FastAPI **REST + WebSocket** + Corridor Risk API (`/docs` auto-generated); **template-first
-  alerts + async Claude** phrasing; **passenger PWA** (FCM) + **operator heatmap**.
+  alerts + async Claude** phrasing; **passenger app** (Expo, push) + **operator heatmap**.
 - **verify:** a twin-injected delay produces a phone push *before* the simulated official
   announcement; operator heatmap updates live over WS.
 
 ### Phase 4b — Helpline & grievance redressal *(M4 + M5, days 7–9, overlaps Phase 4)*
 - `services/helpline/` agent (intent + authority routing + cases + dispatch) behind
   `POST /helpline/chat`; regional-language **ASR** (Bhashini/Whisper, mocked) + optional TTS;
-  PWA **Helpline** chat (text + mic) and **My Queries** status screen; grievance tables.
+  app **Helpline** chat (text + mic) and **My Queries** status screen; grievance tables.
 - **verify:** a spoken Hindi complaint opens a case, routes to the correct department, and
   shows up under My Queries with a status that can advance to *resolved*.
 

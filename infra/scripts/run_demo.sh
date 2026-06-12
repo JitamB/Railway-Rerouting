@@ -6,6 +6,6 @@ set -euo pipefail
 docker compose up -d redis timescaledb
 # python -m cascadeguard_sim.engine --config data/simulator/config/section.example.yaml --replay <event>
 # python -m cascadeguard_worker.pipeline &
-# docker compose up -d api passenger-pwa operator-dashboard
+# docker compose up -d api operator-dashboard   # passenger app is native: cd frontend/passenger-app && npx expo start
 
 echo "Demo stub: wire the twin replay + worker once Phase 1-4 land."

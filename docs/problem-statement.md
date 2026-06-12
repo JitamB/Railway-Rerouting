@@ -44,15 +44,15 @@ questions in real time:
 1. *"If this train is X minutes late now, which downstream stations are at risk, and by how
    much?"* → drives the **operator risk heatmap** (supporting context).
 2. *"What is the best **feasible** alternative for Passenger Y right now, in plain
-   language?"* → pushed to the **passenger PWA** (the primary surface) before they know
+   language?"* → pushed to the **passenger app** (the primary surface) before they know
    there's a problem.
 
-The PWA also carries a **helpline**: a chatbot that takes **text or regional-language
+The app also carries a **helpline**: a chatbot that takes **text or regional-language
 speech**, understands the query with an **agent**, fetches the passenger's details, opens a
 tracked case, and forwards it to the **appropriate authority** (RailMadad-style routing). Every
 past query and its status (resolved / pending) is visible under **My Queries**. See §7.5.
 
-**Primacy is explicit:** the passenger PWA + proactive re-routing is the product; the
+**Primacy is explicit:** the passenger app + proactive re-routing is the product; the
 operator heatmap is situational-awareness context, not the core. The operator
 decision/dispatch optimizer is **Phase-2**, not on the critical path
 ([audit-00](audit-00-verdict.md), [audit-03 §7](audit-03-worth-winning-upgrades.md)).
@@ -102,7 +102,7 @@ Superseding the v0 diagram. Source: [audit-02 §5](audit-02-architecture-deep-di
 └───────────────┬───────────────────────────────────────────────────┘
                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ SERVE: Passenger PWA (primary) | Operator heatmap (context)       │
+│ SERVE: Passenger app (primary) | Operator heatmap (context)       │
 │        REST / WebSocket live feed                                 │
 │  · · · OPTIONAL Phase-2: CP-SAT / RL operator decision layer · · ·│
 └─────────────────────────────────────────────────────────────────┘
@@ -209,7 +209,7 @@ speech** ("मेरी ट्रेन की AC काम नहीं कर 
 - **Low confidence → general helpdesk**, never a guessed department.
 
 Built by `services/helpline/` (agent · ASR/TTS · intent · authority routing · cases · dispatch),
-exposed via `services/api` routers `helpline` + `queries`, surfaced in the passenger PWA.
+exposed via `services/api` routers `helpline` + `queries`, surfaced in the passenger app.
 
 ---
 
@@ -244,7 +244,7 @@ exposed via `services/api` routers `helpline` + `queries`, surfaced in the passe
 | Grievance dispatch | **RailMadad-style** adapter (mocked) | category → authority routing + case tracking |
 | Backend | **FastAPI** | REST + WebSocket + Corridor Risk API + OpenAPI `/docs` |
 | Operator UI | **React + Mapbox GL JS** | heatmap + cascade chain (context) |
-| Passenger UI | **Next.js PWA + FCM** | offline-first, push, primary surface |
+| Passenger UI | **Expo / React Native** (Android + iOS) + `expo-notifications` (FCM/APNs) | native app, reliable background push, primary surface |
 | Storage | **PostgreSQL + TimescaleDB** | event-time delay storage, continuous aggregates |
 | Graph store | PyG sparse adjacency (in-mem); **Memgraph/Neo4j** for scale | drop pure NetworkX beyond demo |
 | Containers | **Docker + Docker Compose** | single-command setup |
@@ -255,7 +255,7 @@ exposed via `services/api` routers `helpline` + `queries`, surfaced in the passe
 
 - **In (build):** digital twin, ingestion + validation gate, heterogeneous graph, one
   ST-GNN + ablation, capacity-aware re-route, template-first alerts + async LLM, passenger
-  PWA, operator heatmap, REST/WS API, graceful degradation, **helpline chatbot
+  app, operator heatmap, REST/WS API, graceful degradation, **helpline chatbot
   (text + regional-language speech) with authority routing + case tracking**.
 - **Mocked (honestly):** COA/RTIS live feed, IRCTC availability/booking, FCM in some envs,
   **Bhashini ASR/TTS, RailMadad authority dispatch**.
@@ -274,7 +274,7 @@ Honest scope is declared in `WHAT_WE_BUILT.md` (real / mocked / next).
 | Member 1 | ML / Model | ST-GNN (`ml/`), training, quantisation, ablation |
 | Member 2 | ML / Data Eng | Hetero graph build (`data/graph/`), conformal/eval, historical calibration |
 | Member 3 | Data Eng | Digital twin (`data/simulator/`), ingestion + validation gate (`data/ingestion/`), Redis Streams |
-| Member 4 | Full-Stack / Frontend | Passenger PWA + operator dashboard (`frontend/`), FCM, push, **helpline chat + My-Queries screens** |
+| Member 4 | Mobile / Frontend | Passenger app (Expo/React Native) + operator dashboard web (`frontend/`), push, **helpline chat + My-Queries screens** |
 | Member 5 | Full-Stack / Backend | FastAPI + WS API (`services/api/`), re-route engine, worker, **helpline service** (agent/ASR/routing/cases), Docker |
 
 ---
