@@ -1,8 +1,8 @@
-# --- secrets ---
+# secrets
 .env
 *.local
 
-# --- Python ---
+# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -15,7 +15,7 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
-# --- ML artifacts (keep dirs via .gitkeep, ignore weights/data) ---
+# ML artifacts (keep dirs via .gitkeep, ignore weights/data)
 ml/checkpoints/*
 !ml/checkpoints/.gitkeep
 data/datasets/*
@@ -26,7 +26,7 @@ data/graph/artifacts/*
 *.onnx
 *.ckpt
 
-# --- Node / frontend ---
+# Node / frontend
 node_modules/
 .next/
 out/
@@ -34,7 +34,17 @@ dist/
 *.tsbuildinfo
 .turbo/
 
-# --- editors / OS ---
+# Expo / React Native (passenger-app)
+.expo/
+*.orig.*
+web-build/
+frontend/passenger-app/google-services.json
+frontend/passenger-app/GoogleService-Info.plist
+
+# editors / OS
 .DS_Store
 .idea/
 .vscode/
+
+# Local files
+intuition.md

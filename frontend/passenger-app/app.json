@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "CascadeGuard",
+    "slug": "cascadeguard-passenger",
+    "version": "0.0.0",
+    "scheme": "cascadeguard",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cascadeguard.passenger",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Used for speaking your helpline query in your language."
+      }
+    },
+    "android": {
+      "package": "com.cascadeguard.passenger",
+      "permissions": ["RECORD_AUDIO", "POST_NOTIFICATIONS"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-notifications",
+      [
+        "expo-av",
+        { "microphonePermission": "Used for speaking your helpline query in your language." }
+      ]
+    ],
+    "extra": {
+      "apiBaseUrl": "http://localhost:8000",
+      "router": {}
+    }
+  }
+}
