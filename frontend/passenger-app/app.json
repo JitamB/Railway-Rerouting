@@ -16,15 +16,20 @@
     },
     "android": {
       "package": "com.cascadeguard.passenger",
-      "permissions": ["RECORD_AUDIO", "POST_NOTIFICATIONS"]
+      "permissions": [
+        "RECORD_AUDIO",
+        "POST_NOTIFICATIONS"
+      ]
     },
     "plugins": [
       "expo-router",
       "expo-localization",
       "expo-notifications",
       [
-        "expo-av",
-        { "microphonePermission": "Used for speaking your helpline query in your language." }
+        "expo-audio",
+        {
+          "microphonePermission": "Used for speaking your helpline query in your language."
+        }
       ]
     ],
     "extra": {

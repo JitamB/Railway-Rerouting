@@ -46,3 +46,28 @@ npx eas build -p android  # or -p ios   (requires an Expo account)
   can just board a reserved train ([../../docs/problem-statement.md §7](../../docs/problem-statement.md)).
 - Push needs `google-services.json` (Android/FCM) and an Expo push setup; keys live in the
   backend `.env` ([../../.env.example](../../.env.example)).
+
+## Implementation status (Stage 8, Step 27 — done)
+Run: `npx expo start` (scan with Expo Go) with the API running (`uvicorn cascadeguard_api.main:app`).
+Typecheck: `npx tsc --noEmit` (clean). For a phone over the QR, set `app.json` →
+`extra.apiBaseUrl` to your machine's LAN IP (not `localhost`).
+
+- `lib/theme.ts` ✅ shared design tokens (colour, spacing, radius, shadow, type) + `riskStyle()` —
+  the green/amber/red spine the whole UI keys on.
+- `lib/api.ts` ✅ typed client mirroring `services/api`: `getCascade`, `getReroute`, `getQueries`,
+  `postHelplineText`/`postHelplineAudio` (multipart). Tolerates the not-yet-built Stage-9 helpline.
+- `app/_layout.tsx` ✅ branded icon tab bar (Home · Helpline · My Queries), registers push on mount.
+- `app/index.tsx` ✅ Home: PNR registration → live `GET /cascade` + `POST /reroute`, pull-to-refresh,
+  loading/error/empty states, foreground-push re-pull.
+- `components/RerouteCard.tsx` ✅ the hero: risk meter + band, calibrated delay interval, the
+  "why", capacity-checked alternatives with seat-reality badges (AVL/WL/FULL), a clearly-separated
+  generated-guidance block, and the live/staleness watermark. Safety-critical fields render from
+  structured data, never prose.
+- `components/HelplineChat.tsx` ✅ chat bubbles, language chips (EN/हिं/বাং/தமி/తెల/मरा), text +
+  on-device mic recording (`expo-audio`) → `POST /helpline/chat`, agent reply with case id +
+  routed authority + status badge.
+- `components/QueryHistory.tsx` ✅ case cards with status badges + empty state.
+- `lib/push.ts` ✅ foreground handler + permission + Expo push token (dev/EAS build; Expo Go
+  no-op). `lib/speech.ts` mic-permission helper (unchanged).
+- **Verify:** typecheck clean; against a live API the Home card shows risk 87%, alternatives
+  `12303`/`15049` with seats, and the "arrives BSB only 10 min later" guidance.

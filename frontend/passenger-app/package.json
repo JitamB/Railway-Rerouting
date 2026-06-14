@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "expo": "^54.0.35",
-    "expo-av": "~16.0.8",
+    "expo-audio": "~1.1.1",
     "expo-constants": "~18.0.13",
     "expo-device": "~8.0.10",
     "expo-linking": "~8.0.12",
