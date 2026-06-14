@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS delay_events (
     source         TEXT NOT NULL,
     regime         TEXT
 );
--- SELECT create_hypertable('delay_events', 'event_time', if_not_exists => TRUE);
+SELECT create_hypertable('delay_events', 'event_time', if_not_exists => TRUE);
 
 CREATE TABLE IF NOT EXISTS predictions (
     event_time         TIMESTAMPTZ NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS predictions (
     mode               TEXT NOT NULL,
     data_age_s         DOUBLE PRECISION NOT NULL
 );
--- SELECT create_hypertable('predictions', 'event_time', if_not_exists => TRUE);
+SELECT create_hypertable('predictions', 'event_time', if_not_exists => TRUE);
 -- Continuous aggregates for dashboard rollups go here (audit-03 §6).
 
 -- Helpline / grievance redressal. PII-bearing: store the minimum, scope to the owner,

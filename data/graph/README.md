@@ -24,3 +24,13 @@ are **learned** end-to-end with the GNN, not hand-set
 Exports (GraphML / GeoJSON) land in `artifacts/`. Inference is **event-scoped** — only the
 k-hop subgraph around a disruption, never a global recompute
 ([audit-04 §10](../../docs/audit-04-flaws-edge-cases.md)).
+
+## Implementation status (Stage 3, Steps 11–13 — done)
+Test: `pytest data/graph/tests`.
+
+- `schema.py` ✅ node/edge types, `CANONICAL_RELATIONS`, feature names · `builder.py` ✅ networkx
+  `MultiDiGraph` (HeteroData-compatible) with all five edge types + learned-weight placeholders +
+  event-scoped `k_hop_subgraph` · `store.py` ✅ GraphML round-trip + GeoJSON export ·
+  `rebuild.py` ✅ timetable-diff-triggered rebuild.
+- Note: the package stays **framework-light** (networkx); the PyG `HeteroData` tensor conversion
+  lives in `ml/cascadeguard_ml/training/data_module.py` (Step 14).

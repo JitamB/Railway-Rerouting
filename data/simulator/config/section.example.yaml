@@ -18,12 +18,48 @@ block_sections:
   - { from: PNBE, to: MGS, length_km: 210, headway_min: 5 }
   - { from: MGS, to: BSB, length_km: 18, headway_min: 4 }
 
+# Scheduled services. Times are minutes from the start of the sim horizon.
+# Demo time-compression: block runs are minutes, not the real hours, so a full
+# cascade fits inside a short horizon. length_km above stays real for the graph layer.
+# Origin has dep only; terminus has arr only; intermediate stops have both.
+services:
+  - train_no: "12301"            # down: PNBE -> MGS -> BSB (turns around as 12302)
+    stops:
+      - { station: PNBE, dep: 0 }
+      - { station: MGS, arr: 40, dep: 45 }
+      - { station: BSB, arr: 55 }
+  - train_no: "12302"            # up: BSB -> MGS -> PNBE (same rake as 12301)
+    stops:
+      - { station: BSB, dep: 70 }
+      - { station: MGS, arr: 80, dep: 85 }
+      - { station: PNBE, arr: 125 }
+  - train_no: "12303"            # down, follows 12301 into MGS
+    stops:
+      - { station: PNBE, dep: 10 }
+      - { station: MGS, arr: 50, dep: 55 }
+      - { station: BSB, arr: 65 }
+  - train_no: "15049"            # down, follows 12303 into MGS
+    stops:
+      - { station: PNBE, dep: 20 }
+      - { station: MGS, arr: 60, dep: 65 }
+      - { station: BSB, arr: 75 }
+
 # Trainsets and rake links (same physical rake turning around as a later service).
 rakes:
   - rake_id: R-12301
-    services: ["12301", "12302"]   # inbound -> outbound turnaround (rake-link edge)
+    inbound: "12301"             # inbound -> outbound turnaround (rake-link edge)
+    outbound: "12302"
+    min_turnaround_min: 15
+
+# Loco links: a loco detaches one service and works the next (cascade edge).
+loco_links:
+  - { from: "12303", to: "15049" }
+
+# Crew links: crew booked off one service signs on to another (crew turnaround).
+crew_links:
+  - { from: "12301", to: "12303" }
 
 # Disruption scenarios available to scenarios.py
 scenarios:
   - { id: fog_regime, type: weather, regime: fog, speed_kmph: 60 }
-  - { id: ohe_failure, type: infra, location: MGS, duration_min: 45 }
+  - { id: ohe_failure, type: infra, location: MGS, start_min: 38, duration_min: 20 }

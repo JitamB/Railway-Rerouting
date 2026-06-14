@@ -7,6 +7,7 @@ dispatched payload carries structured fields, not just prose, so the authority c
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 
 
@@ -18,5 +19,13 @@ class DispatchResult:
 
 
 def dispatch(case: "object", details: "object", channel: str = "railmadad") -> DispatchResult:
-    """Forward the case to the authority; returns the external reference for tracking."""
-    ...
+    """Forward the case to the authority; returns the external reference for tracking.
+
+    RailMadad isn't openly API'd, so this is an honest mock: it returns a deterministic,
+    clearly-labelled reference instead of calling a real endpoint. The payload it would send
+    carries the structured fields (category, department, PNR, train, coach), not just prose, so
+    the authority can act. ``email`` is the generic fallback channel.
+    """
+    digest = hashlib.sha1(case.case_id.encode()).hexdigest()[:6]
+    prefix = "RM" if channel == "railmadad" else "EM"
+    return DispatchResult(ok=True, reference=f"{prefix}-{digest}", channel=channel)

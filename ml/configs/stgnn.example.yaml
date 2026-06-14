@@ -9,9 +9,13 @@ model:
 training:
   loss: focal                # tail-aware: penalize missed large cascades (audit-04 §6)
   class_weighting: true
-  epochs: 50
-  lr: 0.001
+  epochs: 60
+  lr: 0.005
   batch_size: 32
+  n_samples: 320             # randomized twin disruptions (train/val/test split inside)
+  miss_cost: 10.0            # cost-sensitive weight on tail cascades
+  delay_weight: 0.5          # scales the regression (Huber) loss vs the focal risk loss
+  seed: 0
 
 uncertainty:
   conformal: true

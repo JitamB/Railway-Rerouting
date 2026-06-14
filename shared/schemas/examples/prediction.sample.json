@@ -1,0 +1,10 @@
+{
+  "station": "BSB",
+  "cascade_risk": 0.78,
+  "delay_mean_min": 22.5,
+  "delay_interval_min": [12.0, 38.0],
+  "why": "rake-link 12301<->12302 (60%)",
+  "data_age_s": 31.0,
+  "mode": "live",
+  "ood": false
+}

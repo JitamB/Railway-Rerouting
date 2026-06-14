@@ -27,3 +27,17 @@ high overall accuracy is useless if the rare large cascades are missed
 ([audit-04 §6](../docs/audit-04-flaws-edge-cases.md)).
 
 Configs in `configs/`; checkpoints in `checkpoints/` (git-ignored).
+
+## Implementation status (Stage 4, Steps 14–18 — done)
+Test: `pytest ml/tests` · train: `python -m cascadeguard_ml.training.train --config configs/stgnn.example.yaml`
+· demo: `python -m cascadeguard_ml.inference --station MGS`.
+
+- `spec.py` ✅ shared model/data constants · `training/data_module.py` ✅ twin → PyG `HeteroData`
+  windows (delay history on train nodes; stations are static-context sinks) ·
+  `models/{layers,hetero,stgnn}.py` ✅ TemporalConv + DiffusionConv, hetero encoder with learned
+  per-relation gates, the ST-GNN · `training/{losses,train}.py` ✅ focal + cost-sensitive loss,
+  checkpoint · `uncertainty/conformal.py` ✅ split-conformal intervals · `ood/detector.py` ✅
+  Mahalanobis OOD → simulator fallback · `explain/gnn_explainer.py` ✅ occlusion "why" ·
+  `eval/{calibration,ablation}.py` ✅ reliability/Brier + the rake-link ablation · `inference.py` ✅.
+- **Proof slide:** the with-vs-without-rake-link ablation lifts tail recall **0.50 → 1.00**
+  (`run_ablation`); `--station MGS` shows PNBE reached *only* via the rake-link.

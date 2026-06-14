@@ -16,3 +16,10 @@ span services — the ones that prove the *demo* works end to end.
   staleness watermark present and no silent blankness — [audit-04 §1](../docs/audit-04-flaws-edge-cases.md).
 - **Inject a teleporting GPS fix → validation gate quarantines it** (no phantom cascade) —
   [audit-04 §3/§8](../docs/audit-04-flaws-edge-cases.md).
+- **Spoken regional-language grievance → routed, tracked case** (helpline) — the support beat.
+
+## Implementation status (Stage 10, Step 34 — done)
+`e2e/test_demo_scenarios.py` — the five scenarios above, all on the twin with **no live network**.
+Run: `pytest tests/e2e -q` (≈ 2 s; one cached model load). They are exactly what `run_demo.sh`
+replays cold. Per-package unit tests still live next to their code; the whole suite is
+`pytest data services ml tests` (**108 passing**).

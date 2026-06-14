@@ -26,3 +26,13 @@ Calibrate baseline running against a static historical NTES dump so it matches r
 | `calibration.py` | Fit baseline running to a historical NTES dump |
 
 Section config lives in `config/section.example.yaml`.
+
+## Implementation status (Stage 1, Steps 3–6 — done)
+Test: `pytest data/simulator/tests` · visual: `python run_twin.py --scenario ohe_failure --horizon 160`.
+
+- `network.py` ✅ stations/blocks from YAML · `timetable.py` ✅ services + rake/crew/loco links
+  (`ServiceLink`) · `engine.py` ✅ SimPy loop emitting event-time `TrainEvent`s under
+  headway/platform/rake-turnaround constraints · `scenarios.py` ✅ OHE/fog injectors ·
+  `calibration.py` ✅ per-station delay bias from a historical dump (documented defaults if none).
+- Note: the schedule is **time-compressed** (sim-minutes) so a full cascade fits `run(120)`;
+  `length_km` stays real for the graph/plausibility layers. `TrainEvent.event_time` is sim-minutes.

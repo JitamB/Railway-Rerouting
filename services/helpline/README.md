@@ -39,3 +39,27 @@ Config: `config/authorities.example.yaml`. The agent is exposed to the app throu
   sentence.
 - Grievances are PII. Store the **minimum** needed for status tracking, scope each passenger
   to their own queries, and honour a retention policy ([../../docs/audit-04-flaws-edge-cases.md](../../docs/audit-04-flaws-edge-cases.md) bonus: privacy).
+
+## Implementation status (Stage 9, Steps 29–31 — done)
+Test: `pytest services/helpline/tests`. All offline/deterministic — no live network.
+
+- `asr.py` ✅ honest ASR/NMT mock — decodes the clip as UTF-8 (so a real utterance drives the
+  pipeline), else a labelled stand-in transcript; `translate()` is a documented passthrough.
+- `tts.py` ✅ disabled-by-default mock (`synthesize` → `b""`); `enabled` is the seam for a real
+  Bhashini/ULCA client.
+- `intent.py` ✅ rule-based classifier matching **English + romanized-Hindi** keywords →
+  category + confidence, with regex entity extraction (PNR / train / coach). Offline, deterministic.
+- `passenger.py` ✅ deterministic stand-in profile (IRCTC/PRS not openly API'd); PII minimal + masked.
+- `authorities.py` / `authority_router.py` ✅ YAML registry + `route()` that **falls back to the
+  general helpdesk below 0.5 confidence** (a misroute is worse than a clumsy summary).
+- `cases.py` ✅ in-memory case store (process-lifetime) mirroring the `grievance_cases` /
+  `grievance_events` columns in [infra/db/init.sql](../../infra/db/init.sql): `open_case`,
+  `get_case`, `list_cases` (owner-scoped, newest-first), `update_status` (history). Production swaps
+  these tables behind the same functions.
+- `dispatch.py` ✅ honest RailMadad mock → deterministic `RM-…` reference (email = `EM-…` fallback).
+- `agent.py` ✅ `HelplineAgent.handle()` chains transcribe → understand → fetch (PII) → open case →
+  route → dispatch → reply; structured fields drive routing, only the sentence is phrasing. PII
+  attaches to the dispatched payload, never the trackable case.
+- **Verify:** Hindi "B4 coach mein ek **lawaris bag**" → transcript → `security` + extracted
+  PNR/train/coach → routed to **RPF**, case persisted `open`, visible under My Queries.
+  Exposed via the API (Step 32): `POST /helpline/chat`, `GET /queries[/{id}]`.
