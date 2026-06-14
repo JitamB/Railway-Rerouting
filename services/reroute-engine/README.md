@@ -19,3 +19,17 @@ Proactive cascade-aware re-routing is the product's center of gravity, so its re
   — which also prevents creating a *second* cascade onto the alternative.
 - Surface ticket reality: a reserved ticket isn't valid on another train; show fresh-booking /
   Tatkal status rather than pretending you can just board.
+
+## Implementation status (Stage 5, Steps 19–21 — done)
+All four modules implemented and tested (`tests/`, run `pytest services/reroute-engine/tests`).
+
+| Module | Status | Key API | Verified by |
+|---|---|---|---|
+| `routing.py` | ✅ | `find_alternatives(origin, dest, after_min, k)` → `Candidate`s from the twin timetable, sorted by earliest arrival | disrupted PNBE→BSB journey returns `[12303, 15049]` |
+| `ticketing.py` | ✅ | `is_ticket_valid_on(orig, alt)` (train-specific); `live_availability(train)` → `Availability` (**mocked IRCTC**, deterministic) | reserved ticket invalid on an arbitrary alternative |
+| `allocator.py` | ✅ | `allocate(passengers, candidates, capacity)` → capacity-weighted spread, no herding, honest `WAIT` when nothing fits | 2 passengers → different feasible routes; never exceeds seats |
+| `feedback.py` | ✅ | `record_acceptance(pnr, train)` / `projected_demand(train)` — closes the demand loop | accepted re-route fills a seat → next passenger re-routed elsewhere |
+
+Notes / honest mocks: platform numbers are mocked deterministically (real value comes from
+COA/RTIS, where it is safety-critical); IRCTC availability is a deterministic stand-in.
+Consumed next by the worker (Step 25) and the API `/reroute` endpoint (Step 26).
