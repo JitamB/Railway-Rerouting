@@ -30,3 +30,15 @@ Nothing reaches the model unchecked — phantom cascades come from bad input
 
 **Event-time semantics** ([audit-04 §9](../../docs/audit-04-flaws-edge-cases.md)): every event
 carries when the train was *actually* there + a watermark, never "now − scheduled".
+
+## Implementation status (Stage 2, Steps 7–10 — done)
+Test: `pytest data/ingestion/tests` (the buffer test needs Redis on :6379).
+
+- `adapters/twin_adapter.py` ✅ engine → schema-valid event dicts (sim-min → ISO event/received
+  time, `source`, data-age) · `adapters/coa_rtis_adapter.py` ✅ mocked RTIS replay (re-tagged) ·
+  `adapters/ntes_scrape.py` ✅ off by default, wrapped by the breaker · `adapters/weather_tsr.py`
+  ✅ regime label · `adapters/__init__.py` ✅ `get_adapter()` factory keyed on `CG_DATA_SOURCE`.
+- `buffer/store_forward.py` ✅ Redis Streams, at-least-once + replay-on-restart + watermark ·
+  `validation/anomaly_gate.py` ✅ schema + de-dup + monotonic + `Δpos ≤ vmax·Δt` → dead-letter ·
+  `validation/map_matching.py` ✅ snap + confidence-weighted smoothing · `circuit_breaker.py` ✅
+  CLOSED/OPEN/HALF_OPEN · `contracts.py` ✅ shared event-schema validation.
