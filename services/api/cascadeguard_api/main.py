@@ -8,10 +8,20 @@ them together.
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import cascade, corridor, helpline, queries, reroute, stations, ws
 
 app = FastAPI(title="CascadeGuard API", version="0.0.0")
+
+# The operator dashboard (Vite, :3001) and the Expo web preview call this cross-origin. Permissive
+# for the single-zone demo; production restricts the allow-list to the deployed frontends.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health", tags=["meta"])
