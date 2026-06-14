@@ -1,0 +1,10 @@
+{
+  "train_no": "12301",
+  "station": "MGS",
+  "event_time": "2026-06-12T06:42:00+05:30",
+  "received_time": "2026-06-12T06:42:31+05:30",
+  "delay_min": 14.0,
+  "source": "twin",
+  "regime": "fog",
+  "position_confidence": 0.97
+}
