@@ -8,9 +8,16 @@ from __future__ import annotations
 
 
 class TTS:
-    def __init__(self, provider: str = "bhashini") -> None:
-        ...
+    """Honest TTS mock. Bhashini TTS isn't wired, so synthesis is unavailable by default and the
+    helpline stays text-only (``synthesize`` returns ``b""``); ``enabled`` is the seam a real
+    Bhashini/ULCA TTS client flips on without changing callers."""
+
+    def __init__(self, provider: str = "bhashini", enabled: bool = False) -> None:
+        self.provider = provider
+        self.enabled = enabled
 
     def synthesize(self, text: str, language: str) -> bytes:
-        """Return audio bytes for ``text`` in ``language`` (empty/None if TTS unavailable)."""
-        ...
+        """Return audio bytes for ``text`` in ``language`` (empty when TTS is unavailable)."""
+        if not self.enabled:
+            return b""
+        raise NotImplementedError("wire a Bhashini/ULCA TTS client here")
